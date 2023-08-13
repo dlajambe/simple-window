@@ -1,6 +1,6 @@
 #pragma once
 
-namespace wimple_window 
+namespace simple_window 
 {
 	void print();
 }

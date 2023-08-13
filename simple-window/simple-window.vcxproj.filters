@@ -15,9 +15,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\simple-window.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="src\simple-window\test.h">
       <Filter>Header Files</Filter>
     </ClInclude>
