@@ -1,8 +1,6 @@
-namespace simple_window {
-	__declspec(dllimport) void print();
-}
+#include <iostream>
 
-void main()
+int main()
 {
-	simple_window::print();
+	std::cout << "Welcome to Sandbox!" << std::endl;
 }
