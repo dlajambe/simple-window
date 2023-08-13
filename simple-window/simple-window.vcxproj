@@ -87,6 +87,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="src\simple-window\test.h" />
+    <ClInclude Include="src\simple_window.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\simple-window\test.cpp" />

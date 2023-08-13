@@ -18,6 +18,9 @@
     <ClInclude Include="src\simple-window\test.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\simple_window.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\simple-window\test.cpp">
