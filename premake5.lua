@@ -9,6 +9,51 @@ workspace "simple-window"
 
 outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 
+project "glfw"
+	location "vendor/glfw"
+	kind "StaticLib"
+	language "C"
+	targetdir ("bin/" .. outputdir .. "/%{prj.name}")
+	objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
+
+	files
+	{
+		"vendor/%{prj.name}/include/glfw/glfw3.h",
+		"vendor/%{prj.name}/include/glfw/glfw3native.h",
+		"vendor/%{prj.name}/src/glfw_config.h",
+		"vendor/%{prj.name}/src/init.c",
+		"vendor/%{prj.name}/src/input.c",
+		"vendor/%{prj.name}/src/monitor.c",
+		"vendor/%{prj.name}/src/vulkan.c",
+		"vendor/%{prj.name}/src/window.c"
+	}
+
+	filter "system:windows"
+		staticruntime "on"
+		systemversion "10.0.22000.0"
+
+		files
+		{
+			"vendor/%{prj.name}/src/win32_init.c",
+			"vendor/%{prj.name}/src/win32_joystick.c",
+			"vendor/%{prj.name}/src/win32_monitor.c",
+			"vendor/%{prj.name}/src/win32_time.c",
+			"vendor/%{prj.name}/src/win32_thread.c",
+			"vendor/%{prj.name}/src/win32_window.c",
+			"vendor/%{prj.name}/src/wgl_context.c",
+			"vendor/%{prj.name}/src/egl_context.c",
+			"vendor/%{prj.name}/src/osmesa_context.c"
+		}
+
+		defines 
+		{
+			"_GLFW_WIN32",
+			"_CRT_SECURE_NO_WARNINGS"
+		}
+
+	filter {"system:windows", "configurations:Release"}
+		buildoptions "/MT"
+
 project "simple-window"
 	location "simple-window"
 	kind "StaticLib"
@@ -18,7 +63,18 @@ project "simple-window"
 	files
 	{
 		"%{prj.name}/src/**.h",
-		"%{prj.name}/src/**.cpp",
+		"%{prj.name}/src/**.cpp"
+	}
+
+	includedirs
+	{
+		"vendor/glfw/include"
+	}
+
+	links
+	{
+		"glfw",
+		"opengl32.lib"
 	}
 
 	filter "system:windows"
@@ -48,7 +104,7 @@ project "sandbox"
 	files
 	{
 		"%{prj.name}/src/**.h",
-		"%{prj.name}/src/**.cpp",
+		"%{prj.name}/src/**.cpp"
 	}
 
 	includedirs
