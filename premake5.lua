@@ -75,7 +75,7 @@ project "simple-window"
 
 	libdirs
 	{
-		"vendor/glew/lib/release/x64/"
+		"vendor/glew/lib/Release/x64/"
 	}
 
 	links
@@ -83,6 +83,11 @@ project "simple-window"
 		"glfw",
 		"opengl32.lib",
 		"glew32s.lib"
+	}
+
+	defines
+	{
+		"GLEW_STATIC"
 	}
 
 	filter "system:windows"

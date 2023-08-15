@@ -38,6 +38,12 @@ namespace simple_window
 		glfwSetKeyCallback(window, key_callback);
 		glfwMakeContextCurrent(window);
 		
+		if (glewInit() != GLEW_OK)
+		{
+			throw std::exception("GLEW initialization with glewInit() failed");
+			exit(EXIT_FAILURE);
+		}
+
 		glfwSwapInterval(1);
 
 		while (!glfwWindowShouldClose(window))
