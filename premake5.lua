@@ -69,13 +69,20 @@ project "simple-window"
 
 	includedirs
 	{
-		"vendor/glfw/include"
+		"vendor/glfw/include/",
+		"vendor/glew/include/"
+	}
+
+	libdirs
+	{
+		"vendor/glew/lib/release/x64/"
 	}
 
 	links
 	{
 		"glfw",
-		"opengl32.lib"
+		"opengl32.lib",
+		"glew32s.lib"
 	}
 
 	filter "system:windows"
