@@ -117,7 +117,9 @@ project "sandbox"
 
 	includedirs
 	{
-		"simple-window/src"
+		"simple-window/src",
+		"vendor/glfw/include/",
+		"vendor/glew/include/"
 	}
 
 	links
