@@ -42,7 +42,8 @@ project "glfw"
 			"vendor/%{prj.name}/src/win32_window.c",
 			"vendor/%{prj.name}/src/wgl_context.c",
 			"vendor/%{prj.name}/src/egl_context.c",
-			"vendor/%{prj.name}/src/osmesa_context.c"
+			"vendor/%{prj.name}/src/osmesa_context.c",
+			"vendor/%{prj.name}/src/**.c"
 		}
 
 		defines 

@@ -3,13 +3,13 @@
 
 void draw() {
 	std::cout << "Welcome to Sandbox!" << std::endl;
-	simple_window::print();
 }
 
 int main()
 {
 	try {
 		draw();
+		simple_window::create_window();
 	}
 	catch (std::exception ex) {
 		std::cerr << "Exception encountered: " << ex.what() << std::endl;

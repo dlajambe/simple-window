@@ -2,4 +2,4 @@
 
 // To be included by client applications
 
-#include "simple-window/test.h"
+#include "simple-window/simple_window.h"
