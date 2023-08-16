@@ -1,5 +1,5 @@
 #include <iostream>
-#include "simple_window.h"
+#include "sw.h"
 
 void draw() {
 	std::cout << "Welcome to Sandbox!" << std::endl;
