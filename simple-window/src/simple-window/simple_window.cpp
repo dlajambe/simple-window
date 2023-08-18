@@ -3,6 +3,85 @@
 #include "GL/glew.h"
 #include "GLFW/glfw3.h"
 
+namespace
+{
+	/// <summary>
+	/// Compiles a shader from source code into the desired type.
+	/// </summary>
+	/// <param name="type">The type of shader to be compiled, eg. GL_VERTEX_SHADER.</param>
+	/// <param name="source">The GLSL source code to be used to compile the shader</param>
+	/// <returns>A integer id of the compiled shader.</returns>
+	unsigned int compile_shader(unsigned int type, const std::string& source)
+	{
+		unsigned int id = glCreateShader(type);
+		const char* src = source.c_str();
+		glShaderSource(id, 1, &src, nullptr);
+		glCompileShader(id);
+
+		// The compilation status (pass or fail) is saved into 
+		// the result variable
+		int result;
+		glGetShaderiv(id, GL_COMPILE_STATUS, &result);
+
+		// If the compilation failed, the compile stastus will be false
+		// and an error message should be printed to help with debugging
+		if (result == GL_FALSE)
+		{
+			// To extract the error message, the length of the log file
+			// is required
+			int length;
+			glGetShaderiv(id, GL_INFO_LOG_LENGTH, &length);
+
+			// The error message is saved into a message char with a 
+			// large enough buffer to store the entire message
+			char* message = (char*)_malloca(length * sizeof(char));
+			glGetShaderInfoLog(id, length, &length, message);
+
+			// Finally, the message can be printed.
+			std::cerr << "Failed to compile " << 
+				(type == GL_VERTEX_SHADER ? "vertex" : "fragment") <<
+				" shader!" << std::endl;
+			std::cout << message << std::endl;
+
+			// Since the compilation failed, the created shader is useless
+			// and can be deleted
+			glDeleteShader(id);
+		}
+		return id;
+	}
+
+	/// <summary>
+	/// Compiles and links a shader program comprised of a vertex and fragment shader
+	/// using the OpenGL API.
+	/// 
+	/// Shaders are programs that run on the GPU.
+	/// 
+	/// </summary>
+	/// <param name="vertex_shader">The source code of vertex shader.</param>
+	/// <param name="fragment_shader">The source code of the fragment shader</param>
+	/// <returns>The ID of the generated shader program.</returns>
+	unsigned int create_shader(const std::string& vertex_shader, const std::string& fragment_shader)
+	{
+		// The vertex and fragment shaders will be compiled into a single shader program
+		unsigned int program = glCreateProgram();
+		unsigned int vs_id = compile_shader(GL_VERTEX_SHADER, vertex_shader);
+		unsigned int fs_id = compile_shader(GL_FRAGMENT_SHADER, fragment_shader);
+
+		// The successfully compiled shaders must be attached to the program prior
+		// to linking
+		glAttachShader(program, vs_id);
+		glAttachShader(program, fs_id);
+		glLinkProgram(program);
+		glValidateProgram(program);
+
+		// The program has been successfully linked, so the intermediate object files can be deleted
+		glDeleteShader(vs_id);
+		glDeleteShader(fs_id);
+
+		return program;
+	}
+}
+
 namespace simple_window
 {
 	static void error_callback(int error, const char* description)
@@ -89,6 +168,29 @@ namespace simple_window
 		// A value of 1 indicates the buffers should be swapped every screen update
 		glfwSwapInterval(1);
 
+		const std::string vertex_shader =
+			"#version 410 core\n"
+			"\n"
+			"layout(location = 0) in vec4 position;\n"
+			"\n"
+			"void main()\n"
+			"{\n"
+			"	gl_Position = position;\n"
+			"}\n";
+
+		const std::string fragment_shader =
+			"#version 410 core\n"
+			"\n"
+			"out vec4 Color;\n"
+			"\n"
+			"void main()\n"
+			"{\n"
+			"	Color = vec4(1.0, 0.0, 0.0, 1.0);\n"
+			"}\n";
+
+		unsigned int shader = create_shader(vertex_shader, fragment_shader);
+		glUseProgram(shader);
+
 		while (!glfwWindowShouldClose(window))
 		{
 			glDrawArrays(GL_TRIANGLES, 0, 3);
@@ -98,6 +200,7 @@ namespace simple_window
 			glfwPollEvents();
 		}
 
+		glDeleteProgram(shader);
 
 		glfwDestroyWindow(window);
 
