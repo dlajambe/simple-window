@@ -35,11 +35,10 @@ namespace simple_window
 			glfwTerminate();
 			exit(EXIT_FAILURE);
 		}
+		glfwSetKeyCallback(window, key_callback);
 
 		// Step 3 - Initialize the context
-		glfwSetKeyCallback(window, key_callback);
 		glfwMakeContextCurrent(window);
-
 		std::cout << "GL Connection: " << glGetString(GL_VERSION) << std::endl;
 
 		// Step 4 - With the context initialized, GLEW can be loaded. GLEW loads
@@ -80,10 +79,11 @@ namespace simple_window
 		// The first (and only) attribute (index 0) is the vertex position.
 		// Each position is 2 floats, so the count is 2 and the slider is 2 * 8 bytes = 16 bytes
 		// There is no offset, so the final argument is set to 0
-		glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, 0);
+		constexpr int attribute_idx = 0;
+		glVertexAttribPointer(attribute_idx, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, 0);
 
 		// The attribute is only used if it is enabled with the following function
-		glEnableVertexAttribArray(0);
+		glEnableVertexAttribArray(attribute_idx);
 
 		// This controls how often the buffer being displayed is swapped out for the one being rendered
 		// A value of 1 indicates the buffers should be swapped every screen update
