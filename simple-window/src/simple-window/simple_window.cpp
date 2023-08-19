@@ -1,10 +1,63 @@
 #include <iostream>
+#include <fstream>
+#include <string>
+#include <sstream>
 //#define GLFW_INCLUDE_NONE
 #include "GL/glew.h"
 #include "GLFW/glfw3.h"
 
 namespace
 {
+	struct ShaderSource
+	{
+		std::string vertex_source;
+		std::string fragment_source;
+	};
+
+	ShaderSource parse_shader(const std::string& filepath)
+	{
+
+		enum class ShaderType
+		{
+			NONE = -1,
+			VERTEX = 0,
+			FRAGMENT = 1
+		};
+
+		std::ifstream ifs{ filepath };
+		if (!ifs.good())
+		{
+			std::string error_msg = "Error opening file " + filepath;
+			throw std::exception{ error_msg.c_str() };
+		}
+
+		std::string line;
+		ShaderType type = ShaderType::NONE;
+		std::stringstream ss[2];
+		while (std::getline(ifs, line))
+		{
+			if (line.find("#shader") != std::string::npos)
+			{
+				if (line.find("vertex") != std::string::npos)
+				{
+					type = ShaderType::VERTEX;
+				}
+				else if (line.find("fragment") != std::string::npos) {
+					type = ShaderType::FRAGMENT;
+				}
+				else {
+					std::string error_msg = "Unknown shader type in line: " + line;
+					throw std::exception{ error_msg.c_str() };
+				}
+			}
+			else {
+				ss[(int)type] << line << "\n";
+			}
+		}
+
+		return ShaderSource{ ss[0].str(), ss[1].str() };
+	}
+
 	/// <summary>
 	/// Compiles a shader from source code into the desired type.
 	/// </summary>
@@ -168,27 +221,10 @@ namespace simple_window
 		// A value of 1 indicates the buffers should be swapped every screen update
 		glfwSwapInterval(1);
 
-		const std::string vertex_shader =
-			"#version 410 core\n"
-			"\n"
-			"layout(location = 0) in vec4 position;\n"
-			"\n"
-			"void main()\n"
-			"{\n"
-			"	gl_Position = position;\n"
-			"}\n";
-
-		const std::string fragment_shader =
-			"#version 410 core\n"
-			"\n"
-			"out vec4 Color;\n"
-			"\n"
-			"void main()\n"
-			"{\n"
-			"	Color = vec4(1.0, 0.0, 0.0, 1.0);\n"
-			"}\n";
-
-		unsigned int shader = create_shader(vertex_shader, fragment_shader);
+		ShaderSource shader_source = parse_shader("../simple-window/res/shaders/basic.shader");
+		std::cout << shader_source.vertex_source << std::endl;
+		std::cout << shader_source.fragment_source << std::endl;
+		unsigned int shader = create_shader(shader_source.vertex_source, shader_source.fragment_source);
 		glUseProgram(shader);
 
 		while (!glfwWindowShouldClose(window))
