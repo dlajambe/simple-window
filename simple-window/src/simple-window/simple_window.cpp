@@ -14,6 +14,12 @@ namespace
 		std::string fragment_source;
 	};
 
+	/// <summary>
+	/// Parses the shader source code located at the provided filepath.
+	/// 
+	/// </summary>
+	/// <param name="filepath">The path to the file containing shader source code.</param>
+	/// <returns>The parsed shader source code.</returns>
 	ShaderSource parse_shader(const std::string& filepath)
 	{
 
@@ -32,10 +38,15 @@ namespace
 		}
 
 		std::string line;
+		int line_no = 1;
 		ShaderType type = ShaderType::NONE;
+
+		// The source code is stored in a stringstream array with two 
+		// elements: one for the vertex shader and one for the fragment shader
 		std::stringstream ss[2];
 		while (std::getline(ifs, line))
 		{
+			// The programs are delineated by the #shader tag
 			if (line.find("#shader") != std::string::npos)
 			{
 				if (line.find("vertex") != std::string::npos)
@@ -46,13 +57,16 @@ namespace
 					type = ShaderType::FRAGMENT;
 				}
 				else {
-					std::string error_msg = "Unknown shader type in line: " + line;
+					std::string error_msg = "Unknown shader type found in line "
+						+ std::to_string(line_no) + "of " + filepath + ": " + line;
 					throw std::exception{ error_msg.c_str() };
 				}
 			}
 			else {
 				ss[(int)type] << line << "\n";
 			}
+
+			++line_no;
 		}
 
 		return ShaderSource{ ss[0].str(), ss[1].str() };
@@ -221,9 +235,8 @@ namespace simple_window
 		// A value of 1 indicates the buffers should be swapped every screen update
 		glfwSwapInterval(1);
 
+		// Shaders are required to tell the GPU how to render the vertices on the screen
 		ShaderSource shader_source = parse_shader("../simple-window/res/shaders/basic.shader");
-		std::cout << shader_source.vertex_source << std::endl;
-		std::cout << shader_source.fragment_source << std::endl;
 		unsigned int shader = create_shader(shader_source.vertex_source, shader_source.fragment_source);
 		glUseProgram(shader);
 
